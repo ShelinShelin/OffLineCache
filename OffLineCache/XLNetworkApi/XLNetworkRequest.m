@@ -4,7 +4,15 @@
 //
 //  Created by Shelin on 15/11/10.
 //  Copyright © 2015年 GreatGate. All rights reserved.
-//
+//  http://mp.weixin.qq.com/s?__biz=MzAxMzE2Mjc2Ng==&mid=400521774&idx=2&sn=cf4fdcd3f3ac9a92a60729be6151f708&scene=0#wechat_redirect
+/*
+ * XLNetworkApi的一些功能和说明：
+ 
+ 1. 使用XLNetworkRequest做一些GET、POST、PUT、DELETE请求，与业务逻辑对接部分直接以数组或者字典的形式返回。
+ 2. 网络下载、上传文件，以block的形式返回实时的下载、上传进度，上传文件参数通过模型XLFileConfig去存取。
+ 3. 通过继承于XLDataService来将一些数据处理，模型转化封装起来，于业务逻辑对接返回的是对应的模型，减少Controllor处理数据处理逻辑的压力。
+ 4. 自定义一些回调的block
+ */
 
 #import "XLNetworkRequest.h"
 #import "AFNetworking.h"
@@ -243,7 +251,7 @@
 
 
 /**
- *  用来封装上传文件数据的模型类
+ *  用来封装上传参数
  */
 @implementation XLFileConfig
 
