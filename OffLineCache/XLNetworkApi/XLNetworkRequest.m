@@ -16,17 +16,11 @@
 
 #import "XLNetworkRequest.h"
 #import "AFNetworking.h"
+static BOOL isNetworkUse;
 
 @implementation XLNetworkRequest
 
 + (void)getRequest:(NSString *)url params:(NSDictionary *)params success:(requestSuccessBlock)successHandler failure:(requestFailureBlock)failureHandler {
-    
-    //网络不可用
-    if (![self checkNetworkStatus]) {
-        successHandler(nil);
-        failureHandler(nil);
-        return;
-    }
 
     AFHTTPRequestOperationManager *manager = [self getRequstManager];
     
@@ -42,12 +36,6 @@
 
 + (void)postRequest:(NSString *)url params:(NSDictionary *)params success:(requestSuccessBlock)successHandler failure:(requestFailureBlock)failureHandler {
     
-    if (![self checkNetworkStatus]) {
-        successHandler(nil);
-        failureHandler(nil);
-        return;
-    }
-    
     AFHTTPRequestOperationManager *manager = [self getRequstManager];
     
     [manager POST:url parameters:params success:^(AFHTTPRequestOperation * _Nonnull operation, id  _Nonnull responseObject) {
@@ -61,12 +49,6 @@
 
 + (void)putRequest:(NSString *)url params:(NSDictionary *)params success:(requestSuccessBlock)successHandler failure:(requestFailureBlock)failureHandler {
     
-    if (![self checkNetworkStatus]) {
-        successHandler(nil);
-        failureHandler(nil);
-        return;
-    }
-    
     AFHTTPRequestOperationManager *manager = [self getRequstManager];
     
     [manager PUT:url parameters:params success:^(AFHTTPRequestOperation * _Nonnull operation, id  _Nonnull responseObject) {
@@ -79,13 +61,7 @@
 }
 
 + (void)deleteRequest:(NSString *)url params:(NSDictionary *)params success:(requestSuccessBlock)successHandler failure:(requestFailureBlock)failureHandler {
-    
-    if (![self checkNetworkStatus]) {
-        successHandler(nil);
-        failureHandler(nil);
-        return;
-    }
-
+  
     AFHTTPRequestOperationManager *manager = [self getRequstManager];
     
     [manager DELETE:url parameters:params success:^(AFHTTPRequestOperation * _Nonnull operation, id  _Nonnull responseObject) {
@@ -145,13 +121,7 @@
  *  无上传进度监听
  */
 + (void)updateRequest:(NSString *)url params:(NSDictionary *)params fileConfig:(XLFileConfig *)fileConfig success:(requestSuccessBlock)successHandler failure:(requestFailureBlock)failureHandler {
-    
-    if (![self checkNetworkStatus]) {
-        successHandler(nil);
-        failureHandler(nil);
-        return;
-    }
-
+ 
     AFHTTPRequestOperationManager *manager = [self getRequstManager];
     
     [manager POST:url parameters:params constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
@@ -174,11 +144,6 @@
  */
 + (void)updateRequest:(NSString *)url params:(NSDictionary *)params fileConfig:(XLFileConfig *)fileConfig successAndProgress:(progressBlock)progressHandler complete:(responseBlock)completionHandler {
 
-    if (![self checkNetworkStatus]) {
-        progressHandler(0, 0, 0);
-        completionHandler(nil, nil);
-        return;
-    }
     
     NSMutableURLRequest *request = [[AFHTTPRequestSerializer serializer] multipartFormRequestWithMethod:@"POST" URLString:url parameters:params constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
         
@@ -223,8 +188,6 @@
  监控网络状态
  */
 + (BOOL)checkNetworkStatus {
-    
-    __block BOOL isNetworkUse = YES;
     
     AFNetworkReachabilityManager *reachabilityManager = [AFNetworkReachabilityManager sharedManager];
     [reachabilityManager setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) {
