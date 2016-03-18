@@ -35,12 +35,7 @@ typedef void (^progressBlock)(int64_t bytesWritten, int64_t totalBytesWritten, i
 #import "AFNetworking.h"
 @implementation XLNetworkRequest
  + (void)getRequest:(NSString *)url params:(NSDictionary *)params success:(requestSuccessBlock)successHandler failure:(requestFailureBlock)failureHandler {
-//网络不可用
-    if (![self checkNetworkStatus]) {
-        successHandler(nil);
-        failureHandler(nil);
-        return;
-    }
+
     AFHTTPRequestOperationManager *manager = [self getRequstManager];
     
     [manager GET:url parameters:params success:^(AFHTTPRequestOperation * _Nonnull operation, id  _Nonnull responseObject) {
@@ -55,12 +50,6 @@ typedef void (^progressBlock)(int64_t bytesWritten, int64_t totalBytesWritten, i
 ```
  //下载文件，监听下载进度
  + (void)downloadRequest:(NSString *)url successAndProgress:(progressBlock)progressHandler complete:(responseBlock)completionHandler {
-    
-    if (![self checkNetworkStatus]) {
-        progressHandler(0, 0, 0);
-        completionHandler(nil, nil);
-        return;
-    }
     
     NSURLSessionConfiguration *sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
     AFURLSessionManager *manager = [[AFURLSessionManager alloc] initWithSessionConfiguration:sessionConfiguration];
@@ -94,12 +83,6 @@ typedef void (^progressBlock)(int64_t bytesWritten, int64_t totalBytesWritten, i
  //上传文件，监听上传进度
   + (void)updateRequest:(NSString *)url params:(NSDictionary *)params fileConfig:(XLFileConfig *)fileConfig successAndProgress:(progressBlock)progressHandler complete:(responseBlock)completionHandler {
 
-    if (![self checkNetworkStatus]) {
-        progressHandler(0, 0, 0);
-        completionHandler(nil, nil);
-        return;
-    }
-    
     NSMutableURLRequest *request = [[AFHTTPRequestSerializer serializer] multipartFormRequestWithMethod:@"POST" URLString:url parameters:params constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
         
         [formData appendPartWithFileData:fileConfig.fileData name:fileConfig.name fileName:fileConfig.fileName mimeType:fileConfig.mimeType];
